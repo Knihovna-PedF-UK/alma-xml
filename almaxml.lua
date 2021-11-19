@@ -38,6 +38,7 @@ local function get_remap_table(mapping, remap)
       newmap[column] = newname
     end
   end
+  return newmap
 end
 
 --- Process DOM and get table with records
