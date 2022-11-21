@@ -2,6 +2,9 @@
 
 ## SAX method
 
+Rychlejší způsob, protože nemusí vytvářet DOM před zpracováním záznamů. Taky
+můžeme využít callback funkci pro přímý zpracování.
+
 Example:
 
     kpse.set_program_name "luatex"
