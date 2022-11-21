@@ -44,7 +44,7 @@ end
 
 -- @param filename -- ALMA XML file 
 -- @param fn -- callback function that will be executed on each individual record
-local function newload(filename, fn) 
+local function newload(filename, fn,arg_mapping) 
   local f, msg = io.open(filename, "r")
   if not f then return nil, msg end
   local text =f:read("*all")
@@ -52,6 +52,7 @@ local function newload(filename, fn)
   local records = {}
   local current = {}
   local current_name 
+  local mapping = arg_mapping or mapping
   local handler = function()
     local obj = {}
     obj.starttag = function(self, name, attr)
@@ -88,5 +89,6 @@ local function newload(filename, fn)
 end
 
 return {
-  load = newload
+  load = newload,
+  mapping = mapping
 }
