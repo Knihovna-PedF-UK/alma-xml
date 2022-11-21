@@ -10,36 +10,6 @@ local mapping = {
   C19 = "year"
 }
 
-local function load(filename)
-  -- DOM object is too slow  for this, see the newload function for what we use
-  local f, msg = io.open(filename, "r")
-  if not f then return nil, msg end
-  print "start"
-  local text =f:read("*all")
-  f:close()
-  print "xml read"
-  local dom = domobject.parse(text)
-  print "dom parsed"
-  local records = {}
-  for _, rec in ipairs(dom:query_selector("R")) do
-    local current = {}
-    for _, child in ipairs(rec:get_children()) do
-      if child:is_element() then
-        local name = child:get_element_name()
-        local mapped_name = mapping[name]
-        if mapped_name then
-          current[mapped_name] = child:get_text()
-        end
-      end
-    end
-    local id = current.sysno
-    if id and not records[id] then
-      print(id, current.callno, current.author, current.title, current.year)
-      records[id] = current
-    end
-  end
-  return records
-end
 
 
 -- @param filename -- ALMA XML file 
@@ -65,15 +35,18 @@ local function newload(filename, fn,arg_mapping)
     end
     obj.endtag = function(self, name)
       if name == "R" then
-        local id = current.sysno
-        if id and not records[id] then
-          -- print(id, current.callno, current.author, current.title, current.year)
-          records[id] = current
-          if fn then
-            fn(current)
-          end
-        end
-        current = {}
+        if fn then fn(current) end
+        table.insert(records, current)
+        currrent = {}
+        -- local id = current.sysno
+        -- if id and not records[id] then
+        --   -- print(id, current.callno, current.author, current.title, current.year)
+        --   records[id] = current
+        --   if fn then
+        --     fn(current)
+        --   end
+        -- end
+        -- current = {}
       end
     end
     obj.text = function(self, text)
